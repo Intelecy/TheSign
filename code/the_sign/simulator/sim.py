@@ -138,23 +138,29 @@ class Simulator:
         clock = pygame.time.Clock()
         font_size = 40
         font = pygame.font.SysFont(None, font_size)
-
-        # For frame number calculation.
-        start_time = pygame.time.get_ticks()
+        debug_font = pygame.font.SysFont("monospace", 40)
 
         # ===== Main Loop =====
-
         running = True
-
+        paused = False  # Track if the animation is paused
         animation = self._animations[self._current_animation]
         animation.setup(self.sign)
 
-        while running:
-            animation = self._animations[self._current_animation]
+        # For frame number calculation.
+        start_time = pygame.time.get_ticks()
+        paused_time = 0  # Time spent while paused
+        pause_start_time = 0  # Record the time when pause starts
+        frame_number = 0  # Current frame number
 
+        while running:
             current_time = pygame.time.get_ticks()
-            elapsed = (current_time - start_time) / 1000.0  # seconds elapsed
-            frame_number = int(self.fps * elapsed)
+
+            # Only calculate elapsed time if not paused
+            if not paused:
+                elapsed = (
+                    current_time - start_time - paused_time
+                ) / 1000.0  # seconds elapsed
+                frame_number = int(self.fps * elapsed)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -175,9 +181,23 @@ class Simulator:
                         )
                         animation = self._animations[self._current_animation]
                         animation.setup(self.sign)
+                    elif event.key == pygame.K_p:
+                        paused = not paused  # Toggle the pause state
 
-            # Execute the animation (updates cell colors).
-            animation.exec(self.sign, frame_number)
+                        # Track the time when pausing or unpausing
+                        if paused:
+                            pause_start_time = current_time  # Start pause timer
+                        else:
+                            # When unpausing, add the time spent paused to `paused_time`
+                            paused_time += current_time - pause_start_time
+                    elif event.key == pygame.K_s and paused:
+                        # If paused, step the animation forward by one frame
+                        frame_number += 1
+                        animation.exec(self.sign, frame_number)  # Manually step a frame
+
+            if not paused:
+                # Execute the animation (updates cell colors).
+                animation.exec(self.sign, frame_number)
 
             # Compute scaling and offsets so the sign occupies ~90% of the window.
             win_width, win_height = screen.get_size()
@@ -190,6 +210,14 @@ class Simulator:
             offset_y = win_height / 2 - scale * grid_center_y
 
             screen.fill(BLACK)
+
+            # Display the pause state in the debug info.
+            debug_text = f"f: {frame_number % animation.frame_count}"
+            if paused:
+                debug_text += " (Paused)"
+
+            text_surf = debug_font.render(debug_text, True, (0, 255, 40))
+            screen.blit(text_surf, text_surf.get_rect())
 
             # --- Draw Wiring as Base Layer ---
             sorted_cells = sorted(self.cells, key=lambda c: c["dot"])

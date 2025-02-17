@@ -1,6 +1,7 @@
 import time
 import board
 from micropython import const
+from math import floor
 
 adapt_colors = board.board_id != "GENERIC_LINUX_PC"
 
@@ -134,17 +135,21 @@ class Color:
           - 0.0 = this color only
           - 1.0 = other color only
         """
-        if not 0.0 <= weight <= 1.0:
-            raise ValueError("Weight must be between 0.0 and 1.0.")
+
+        if weight <= 0.0:
+            return self
+
+        if weight >= 1.0:
+            return color
 
         # Convert weight to an integer in the range 0–256 for integer math
-        weight_scaled = round(weight * 256)
+        weight_scaled = floor(weight * 256)
         inv_weight_scaled = 256 - weight_scaled
 
         # Compute the blended components
         blended_values = [
             (self.values[i] * inv_weight_scaled + color.values[i] * weight_scaled)
-            // 256
+            // 0xFF
             for i in range(4)
         ]
 
@@ -163,7 +168,8 @@ class Colors:
         BLUE = Color(0, 0, 255)
         PURPLE = Color.from_packed(colorwheel(200))
         PINK = Color.from_packed(colorwheel(240))
-        INTELECY = Color(0, 255, 40)
+        # INTELECY = Color(0, 255, 40)
+        INTELECY = Color(28, 255, 81)
     else:
         RED = Color(255, 0, 0)
         ORANGE = Color.from_packed(colorwheel(42.5))

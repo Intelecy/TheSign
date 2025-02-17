@@ -1,5 +1,7 @@
+from ..sequence import gen_rainbow
+
 try:
-    from typing import List
+    from typing import List, Optional
 except ImportError:
     pass
 
@@ -8,23 +10,18 @@ from the_sign import Sign
 from the_sign.color import Color, Colors
 
 
-class RainbowCycle(Animation):
+class RainbowRingCycle(Animation):
     def __init__(self, max_n: int = 37, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.max_n = max_n
+        self.grad: Optional[List[Color]] = []
+        self.step = 48
 
-        interval = 256 // max_n
-
-        self.colors: List[Color] = [
-            Colors.COLORWHEEL[i * interval].with_brightness(self.max_brightness)
-            for i in range(max_n)
-        ]
+    def setup(self, sign: Sign):
+        self.grad = gen_rainbow(self.duration, self.frame_rate)
 
     def render(self, sign: Sign, frame_in_animation: int, completed: float):
-        n = self.max_n
-
-        for i in range(n):
-            sign[i] = self.colors[i].mix(self.colors[(i + 1) % n], 1 - completed)
-
-        if frame_in_animation == self.frame_count - 1:
-            self.colors = [self.colors[-1]] + self.colors[:-1]
+        for i in range(4):
+            sign.ring(
+                3 - i,
+                self.grad[(frame_in_animation + i * self.step) % len(self.grad)],
+            )

@@ -15,7 +15,7 @@ class Sparkle(Animation):
         self,
         base_color: Color,
         flash_color: Color = Colors.WHITE,
-        max_sparks_per_second: int = 5,
+        max_sparks_per_second: int = 4,
         spark_duration_frames: int = 5,
         *args,
         **kwargs

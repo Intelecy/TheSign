@@ -10,7 +10,7 @@ from the_sign.animations import Animation
 from the_sign.color import Colors
 
 
-class RainbowSparkle(Animation):
+class Confetti(Animation):
     def __init__(
         self,
         max_sparks_per_second: int = 10,

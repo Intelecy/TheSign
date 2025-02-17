@@ -6,6 +6,13 @@ try:
 except ImportError:
     pass
 
+import random
+
+
+class AnimationGroup:
+    def __init__(self):
+        pass
+
 
 class Animation:
     def __init__(
@@ -72,3 +79,9 @@ def bounce(completed: float, inverse: bool = False) -> float:
         return 1 - r
 
     return r
+
+
+def shuffle(lst):
+    for i in range(len(lst) - 1):
+        j = random.randrange(i, len(lst))
+        lst[i], lst[j] = lst[j], lst[i]
