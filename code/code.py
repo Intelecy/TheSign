@@ -10,6 +10,7 @@ from the_sign.animations.confetti import Confetti
 from the_sign.animations.rainbow_shimmer import RainbowShimmer
 from the_sign.animations.shimmer import Shimmer
 from the_sign.animations.rainbow_cycle import RainbowRingCycle
+from the_sign.animations.innovation_norge import InnovationNorge
 from the_sign.animations.sparkle import Sparkle
 from the_sign.animations.static import SolidColor
 from the_sign.color import Colors
@@ -26,7 +27,7 @@ class App:
         self.start = None
         self.frame_rate = frame_rate
         self.max_brightness = max_brightness
-        self.animation_length = 60
+        self.animation_length = 30
 
         self.pixels = adafruit_neopxl8.NeoPxl8(
             data0=board.NEOPIXEL0,
@@ -63,29 +64,34 @@ class App:
             frame_rate=self.frame_rate,
         )
 
+        shimmer_innovation = InnovationNorge(
+            duration=self.animation_length,
+            frame_rate=self.frame_rate,
+        )
+
         self.animations = [
-            shimmer_intelecy,
+            shimmer_innovation,
             Confetti(spark_duration_frames=10, frame_rate=self.frame_rate),
-            shimmer_white,
+            shimmer_intelecy,
             RainbowShimmer(
                 duration=5,
                 frame_rate=self.frame_rate,
             ),
-            shimmer_intelecy,
+            shimmer_innovation,
             KnightRider(
                 color=Colors.RED,
                 duration=2,
                 frame_rate=self.frame_rate,
             ),
-            shimmer_white,
-            RainbowRingCycle(duration=8, frame_rate=self.frame_rate),
             shimmer_intelecy,
+            RainbowRingCycle(duration=8, frame_rate=self.frame_rate),
+            shimmer_innovation,
             Sparkle(
                 base_color=Colors.INTELECY,
                 # flash_color=Colors.YELLOW,
                 frame_rate=self.frame_rate,
             ),
-            shimmer_white,
+            shimmer_innovation,
             Shimmer(
                 c1=Colors.YELLOW,
                 c2=Colors.RED,

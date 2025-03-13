@@ -51,11 +51,9 @@ class Shimmer(Animation):
             self.dot_map[i] = random.randint(0, len(self.fades) - 1)
 
     def render(self, sign: Sign, frame_in_animation: int, completed: float):
-        # print(frame_in_animation)
         if frame_in_animation == 0:
             self.reset(sign)
 
         for i in range(sign.n):
             f = self.fades[self.dot_map[i]]
-            o = self.offsets[i]
-            sign[i] = f[(frame_in_animation + o) % len(f)]
+            sign[i] = f[(frame_in_animation + self.offsets[i]) % len(f)]
