@@ -13,6 +13,7 @@ from the_sign.animations.rainbow_cycle import RainbowRingCycle
 from the_sign.animations.innovation_norge import InnovationNorge
 from the_sign.animations.sparkle import Sparkle
 from the_sign.animations.static import SolidColor
+from the_sign.animations.snake import Snake
 from the_sign.color import Colors
 from micropython import const
 
@@ -27,7 +28,7 @@ class App:
         self.start = None
         self.frame_rate = frame_rate
         self.max_brightness = max_brightness
-        self.animation_length = 30
+        self.animation_length = 60
 
         self.pixels = adafruit_neopxl8.NeoPxl8(
             data0=board.NEOPIXEL0,
@@ -64,20 +65,16 @@ class App:
             frame_rate=self.frame_rate,
         )
 
-        shimmer_innovation = InnovationNorge(
-            duration=self.animation_length,
-            frame_rate=self.frame_rate,
-        )
-
         self.animations = [
-            shimmer_innovation,
+            Snake(frame_rate=self.frame_rate),
+            shimmer_white,
             Confetti(spark_duration_frames=10, frame_rate=self.frame_rate),
             shimmer_intelecy,
             RainbowShimmer(
                 duration=5,
                 frame_rate=self.frame_rate,
             ),
-            shimmer_innovation,
+            shimmer_white,
             KnightRider(
                 color=Colors.RED,
                 duration=2,
@@ -85,13 +82,13 @@ class App:
             ),
             shimmer_intelecy,
             RainbowRingCycle(duration=8, frame_rate=self.frame_rate),
-            shimmer_innovation,
+            shimmer_white,
             Sparkle(
                 base_color=Colors.INTELECY,
                 # flash_color=Colors.YELLOW,
                 frame_rate=self.frame_rate,
             ),
-            shimmer_innovation,
+            shimmer_white,
             Shimmer(
                 c1=Colors.YELLOW,
                 c2=Colors.RED,
