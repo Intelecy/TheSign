@@ -24,6 +24,59 @@ from the_sign.color import Colors, Color
 #       22    09
 #          21
 
+# axes: [ /, \ ]
+# centered on 18
+# positive values move down
+coords = [
+    [0,3], # 0
+    [-1,2], # 1
+    [-2,1], # 2
+    [-3,0], # 3
+    [-3,-1], # 4
+    [-2,0], # 5
+    [-1,1], # 6
+    [0,2], # 7
+    [1,3], # 8
+    [2,3], # 9
+    [1,2], # 10
+    [0,1], # 11
+    [-1,0], # 12
+    [-2,-1], # 13
+    [-3,-2], # 14
+    [-3,-3], # 15
+    [-2,-2], # 16
+    [-1,-1], # 17
+    [0,0], # 18
+    [1,1], # 19
+    [2,2], # 20
+    [3,3], # 21
+    [3,2], # 22
+    [2,1], # 23
+    [1,0], # 24
+    [0,-1], # 25
+    [-1,-2], # 26
+    [-2,-3], # 27
+    [-1,-3], # 28
+    [0,-2], # 29
+    [1,-1], # 30
+    [2,0], # 31
+    [3,1], # 32
+    [3,0], # 33
+    [2,-1], # 34
+    [1,-2], # 35
+    [0,-3], # 36
+]
+
+def dist(a: int, b: int) -> int:
+    ac = coords[a]
+    bc = coords[b]
+    dx = ac[0] - bc[0]
+    dy = ac[1] - bc[1]
+    if (dx > 0 and dy < 0) or (dx < 0 and dy > 0) :
+        return abs(dx) + abs(dy)
+    else:
+        return max(abs(dx), abs(dy))
+
 neighbors_list = [
     [1, 7, 8],
     [0, 2, 6, 7],
@@ -64,6 +117,13 @@ neighbors_list = [
     [28, 29, 35],
 ]
 
+# Generate colors:
+# length = 5
+# head = Colors.BLUE
+# tail = Colors.PINK
+# colors = []
+# for i in range(0,length+1):
+#     colors.append(head.mix(tail, float(i)/float(length)))
 snake_colors = [
     Color(r=0, g=0, b=255, w=0),  # blue
     Color(r=42, g=0, b=214, w=0),
@@ -105,30 +165,58 @@ def make_snake(length: int):
         snake.append(random.choice(f))
     return snake
 
-
 class State:
+    DEAD = 0
+    ALIVE = 1
+
     def __init__(self):
-        self.prize = None
-        self.snake = None
+        # state 0 = dead, 1 = alive
+        self.state = State.ALIVE
+        self.prize = 0
+        self.snake = deque([])
         self.reset()
 
     def reset(self):
-        self.snake = deque(make_snake(6), 37)
+        self.state = State.ALIVE
+        self.snake = deque(make_snake(4), 37)
         self.prize = random.choice(free(range(0, 37), self.snake))
 
+    def closest_to_prize(self, options: list[int]) -> list[int]:
+        min_dist = 100
+        closest = []
+
+        for x in options:
+            d = dist(x, self.prize)
+            if d < min_dist:
+                min_dist = d
+                closest = [x]
+            elif d == min_dist:
+                closest.append(x)
+
+        return closest
+
+
     def update(self):
+        if self.state == State.ALIVE:
+            self.update_alive()
+        else:
+            if len(self.snake) == 1:
+                self.reset()
+            else:
+                self.snake.pop()
+
+    def update_alive(self):
         head = self.snake[0]
         f = free(neighbors(head), self.snake)
         if len(f) == 0:
-            # oh no! we ran into ourselves. For now just reset
-            self.reset()
+            self.state = State.DEAD
             return
 
-        next_free = random.choice(f)
+        next_free = random.choice(self.closest_to_prize(f))
 
-        if next == self.prize:
-            self.prize = random.choice(free(range(0, 37), self.snake))
+        if next_free == self.prize:
             self.snake.appendleft(next_free)
+            self.prize = random.choice(free(range(0, 37), self.snake))
         else:
             self.snake.appendleft(next_free)
             self.snake.pop()
@@ -139,36 +227,42 @@ class Snake(Animation):
         super().__init__(*args, **kwargs)
 
         # n updates per second
-        self.frames_per_update = self.frame_rate // 4
+        self.frames_per_alive_update = self.frame_rate // 4
+        self.frames_per_dead_update = self.frames_per_alive_update // 4
 
         self.base_color = Colors.BLACK
         self.prize_color = Colors.INTELECY
 
-        self.snake_head_color = Colors.PINK
-        self.snake_tail_color = Colors.YELLOW
-
         self.snake_colors = snake_colors
-        # max_length = 5
-        # for i in range(0,max_length+1):
-        #     self.snake_colors.append(self.snake_head_color.mix(self.snake_tail_color, float(i)/float(max_length)))
+        self.dead_snake_color = Colors.RED
 
-        self.state = None
-
-    def setup(self, sign: Sign):
         self.state = State()
 
+    def setup(self, sign: Sign):
+        self.state.reset()
+
+    def frames_per_update(self):
+        if self.state.state == State.ALIVE:
+            return self.frames_per_alive_update
+        else:
+            return self.frames_per_dead_update
+
     def render(self, sign: Sign, frame_in_animation: int, completed: float):
-        if frame_in_animation % self.frames_per_update != 0:
+        if frame_in_animation % self.frames_per_update() != 0:
             return
 
         self.state.update()
 
         sign.fill(self.base_color)
 
-        for i, idx in enumerate(self.state.snake):
-            if i < len(self.snake_colors):
-                sign[idx] = self.snake_colors[i]
-            else:
-                sign[idx] = self.snake_tail_color
+        if self.state.state == State.ALIVE:
+            for i, idx in enumerate(self.state.snake):
+                if i < len(self.snake_colors):
+                    sign[idx] = self.snake_colors[i]
+                else:
+                    sign[idx] = self.snake_colors[-1]
+        else:
+            for idx in self.state.snake:
+                sign[idx] = self.dead_snake_color
 
         sign[self.state.prize] = self.prize_color
