@@ -2,7 +2,7 @@ BASE_DIR	:= /media/$(USER)
 TARGET		:= $(BASE_DIR)/CIRCUITPY
 
 deploy:
-	rsync -urvh -W --inplace --no-compress --exclude='__pycache__/' --exclude='*.pyc' code.py the_sign /media/jonathan/CIRCUITPY
+	rsync -urvh -W --inplace --no-compress --exclude='__pycache__/' --exclude='*.pyc' code.py the_sign /run/media/jonathan/CIRCUITPY
 #	cp *.py $(TARGET)
 #	cp the_sign/*.py $(TARGET)/the_sign/
 #	cp the_sign/animations/*.py $(TARGET)/the_sign/animations/
