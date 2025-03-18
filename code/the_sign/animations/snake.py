@@ -118,23 +118,28 @@ neighbors_list = [
 ]
 
 # Generate colors:
-# length = 5
-# head = Colors.BLUE
-# tail = Colors.PINK
-# colors = []
-# for i in range(0,length+1):
-#     colors.append(head.mix(tail, float(i)/float(length)))
+length = 7
+head = Colors.PINK
+tail = Colors.YELLOW
+colors = []
+for i in range(0,length+1):
+    colors.append(head.mix(tail, float(i)/float(length)))
+print(colors)
 snake_colors = [
     Color(r=0, g=0, b=255, w=0),  # blue
-    Color(r=42, g=0, b=214, w=0),
-    Color(r=84, g=0, b=172, w=0),
-    Color(r=126, g=0, b=130, w=0),
-    Color(r=168, g=0, b=88, w=0),
+    Color(r=29, g=0, b=226, w=0),
+    Color(r=60, g=0, b=195, w=0),
+    Color(r=89, g=0, b=166, w=0),
+    Color(r=120, g=0, b=135, w=0),
+    Color(r=149, g=0, b=106, w=0),
+    Color(r=180, g=0, b=75, w=0),
     Color(r=210, g=0, b=45, w=0),  # pink
-    Color(r=200, g=19, b=36, w=0),
-    Color(r=190, g=38, b=27, w=0),
-    Color(r=180, g=57, b=18, w=0),
-    Color(r=170, g=76, b=9, w=0),
+    Color(r=203, g=13, b=38, w=0),
+    Color(r=196, g=27, b=32, w=0),
+    Color(r=189, g=41, b=25, w=0),
+    Color(r=181, g=54, b=19, w=0),
+    Color(r=174, g=68, b=13, w=0),
+    Color(r=167, g=82, b=6, w=0),
     Color(r=159, g=96, b=0, w=0),  # yellow
 ]
 
