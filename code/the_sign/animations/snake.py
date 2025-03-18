@@ -165,19 +165,16 @@ def make_snake(length: int):
         snake.append(random.choice(f))
     return snake
 
-class State:
-    DEAD = 0
-    ALIVE = 1
 
+class State:
     def __init__(self):
-        # state 0 = dead, 1 = alive
-        self.state = State.ALIVE
+        self.alive = True
         self.prize = 0
         self.snake = deque([])
         self.reset()
 
     def reset(self):
-        self.state = State.ALIVE
+        self.alive = True
         self.snake = deque(make_snake(4), 37)
         self.prize = random.choice(free(range(0, 37), self.snake))
 
@@ -197,7 +194,7 @@ class State:
 
 
     def update(self):
-        if self.state == State.ALIVE:
+        if self.alive:
             self.update_alive()
         else:
             if len(self.snake) == 1:
@@ -209,7 +206,7 @@ class State:
         head = self.snake[0]
         f = free(neighbors(head), self.snake)
         if len(f) == 0:
-            self.state = State.DEAD
+            self.alive = False
             return
 
         next_free = random.choice(self.closest_to_prize(f))
@@ -242,7 +239,7 @@ class Snake(Animation):
         self.state.reset()
 
     def frames_per_update(self):
-        if self.state.state == State.ALIVE:
+        if self.state.alive:
             return self.frames_per_alive_update
         else:
             return self.frames_per_dead_update
@@ -255,7 +252,7 @@ class Snake(Animation):
 
         sign.fill(self.base_color)
 
-        if self.state.state == State.ALIVE:
+        if self.state.alive:
             for i, idx in enumerate(self.state.snake):
                 if i < len(self.snake_colors):
                     sign[idx] = self.snake_colors[i]
