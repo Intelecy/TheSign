@@ -28,54 +28,56 @@ from the_sign.color import Colors, Color
 # centered on 18
 # positive values move down
 coords = [
-    [0,3], # 0
-    [-1,2], # 1
-    [-2,1], # 2
-    [-3,0], # 3
-    [-3,-1], # 4
-    [-2,0], # 5
-    [-1,1], # 6
-    [0,2], # 7
-    [1,3], # 8
-    [2,3], # 9
-    [1,2], # 10
-    [0,1], # 11
-    [-1,0], # 12
-    [-2,-1], # 13
-    [-3,-2], # 14
-    [-3,-3], # 15
-    [-2,-2], # 16
-    [-1,-1], # 17
-    [0,0], # 18
-    [1,1], # 19
-    [2,2], # 20
-    [3,3], # 21
-    [3,2], # 22
-    [2,1], # 23
-    [1,0], # 24
-    [0,-1], # 25
-    [-1,-2], # 26
-    [-2,-3], # 27
-    [-1,-3], # 28
-    [0,-2], # 29
-    [1,-1], # 30
-    [2,0], # 31
-    [3,1], # 32
-    [3,0], # 33
-    [2,-1], # 34
-    [1,-2], # 35
-    [0,-3], # 36
+    [0, 3],  # 0
+    [-1, 2],  # 1
+    [-2, 1],  # 2
+    [-3, 0],  # 3
+    [-3, -1],  # 4
+    [-2, 0],  # 5
+    [-1, 1],  # 6
+    [0, 2],  # 7
+    [1, 3],  # 8
+    [2, 3],  # 9
+    [1, 2],  # 10
+    [0, 1],  # 11
+    [-1, 0],  # 12
+    [-2, -1],  # 13
+    [-3, -2],  # 14
+    [-3, -3],  # 15
+    [-2, -2],  # 16
+    [-1, -1],  # 17
+    [0, 0],  # 18
+    [1, 1],  # 19
+    [2, 2],  # 20
+    [3, 3],  # 21
+    [3, 2],  # 22
+    [2, 1],  # 23
+    [1, 0],  # 24
+    [0, -1],  # 25
+    [-1, -2],  # 26
+    [-2, -3],  # 27
+    [-1, -3],  # 28
+    [0, -2],  # 29
+    [1, -1],  # 30
+    [2, 0],  # 31
+    [3, 1],  # 32
+    [3, 0],  # 33
+    [2, -1],  # 34
+    [1, -2],  # 35
+    [0, -3],  # 36
 ]
+
 
 def dist(a: int, b: int) -> int:
     ac = coords[a]
     bc = coords[b]
     dx = ac[0] - bc[0]
     dy = ac[1] - bc[1]
-    if (dx > 0 and dy < 0) or (dx < 0 and dy > 0) :
+    if (dx > 0 and dy < 0) or (dx < 0 and dy > 0):
         return abs(dx) + abs(dy)
     else:
         return max(abs(dx), abs(dy))
+
 
 neighbors_list = [
     [1, 7, 8],
@@ -118,13 +120,13 @@ neighbors_list = [
 ]
 
 # Generate colors:
-length = 7
-head = Colors.PINK
-tail = Colors.YELLOW
-colors = []
-for i in range(0,length+1):
-    colors.append(head.mix(tail, float(i)/float(length)))
-print(colors)
+# length = 7
+# head = Colors.PINK
+# tail = Colors.YELLOW
+# colors = []
+# for i in range(0, length + 1):
+#     colors.append(head.mix(tail, float(i) / float(length)))
+# print(colors)
 snake_colors = [
     Color(r=0, g=0, b=255, w=0),  # blue
     Color(r=29, g=0, b=226, w=0),
@@ -196,7 +198,6 @@ class State:
                 closest.append(x)
 
         return closest
-
 
     def update(self):
         if self.alive:
